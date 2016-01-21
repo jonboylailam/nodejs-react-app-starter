@@ -1,43 +1,44 @@
 var stampit = require('stampit');
 var rx = require('rx');
+var request = require('superagent');
 
-var rxRequest = require('rx-request');
-
-var api = stampit.init(function () {
-
-  var backend = rxRequest({
-      url: window.location.origin
-  });
-
-  this.postHello = function (data) {
-    var reqParams = {
-      pathname: "/v1/api/hello"
-    };
-
-    return backend.post(reqParams, data).flatMap(function (d) {
-      if (d.error) {
-        return rx.Observable.throw(new Error(d.error));
-      } else {
-        return rx.Observable.just(d);
-      }
+module.exports = stampit.methods({
+  handleResponse(err, ans) {
+    if (err) {
+      obs.onError(err);
+    } else {
+      obs.onNext(ans);
+      obs.onCompleted();
+    }
+  },
+  getTest(query) {
+    var url = this.url;
+    return rx.Observable.create((obs) => {
+      var get = request.get(`${url}/api/test`);
+      if (query) get.query(query);
+      get.end((err, ans) => {
+        if (err) {
+          obs.onError(err);
+        } else {
+          obs.onNext(ans.body);
+          obs.onCompleted();
+        }
+      });
     });
-  };
-
-  this.getHello = function (query) {
-    var reqParams = {
-      pathname: "/v1/api/hello",
-      search: '?q='+query
-    };
-
-    return backend.get(reqParams).flatMap(function (d) {
-      if (d.error) {
-        return rx.Observable.throw(new Error(d.error));
-      } else {
-        return rx.Observable.just(d);
-      }
+  },
+  postTest(data) {
+    var url = this.url;
+    return rx.Observable.create((obs) => {
+      request.post(`${url}/api/test`).send(data).end((err, ans) => {
+        if (err) {
+          obs.onError(err);
+        } else {
+          obs.onNext(ans.body);
+          obs.onCompleted();
+        }
+      });
     });
-  };
-
+  }
+}).refs({
+  url: 'http://localhost:3000'
 });
-
-module.exports = api();
