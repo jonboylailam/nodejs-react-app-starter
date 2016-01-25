@@ -35,10 +35,13 @@
   },
   "dependencies": {
     "body-parser": "^1.14.1",
+    "baobab": "^2.3.1",
+    "baobab-react": "^1.0.0",
     "cluster": "^0.7.7",
     "compression": "^1.6.0",
     "express": "^4.13.3",
     "history": "^1.17.0",
+    "local-storage": "^1.4.2",
     "node-statsd": "^0.1.1",
     "react": "^0.14.6",
     "react-dom": "^0.14.6",
