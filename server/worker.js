@@ -10,7 +10,7 @@ var StatsD = require('node-statsd');
 var logging = require('./logging');
 var memoryMonitor = require('./monitors/memory');
 
-var apiHandler = require('./rest/api');
+var apiHandler = require('./api');
 
 var worker = stampit.init(function () {
   var instance = this;
