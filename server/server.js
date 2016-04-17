@@ -2,7 +2,7 @@
 var cluster = require('cluster');
 
 var pathToClient = process.env.PATH_TO_CLIENT || './client/build';
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 3010;
 var heartbeatInterval = process.env.HEARTBEAT_INTERVAL || 5;
 
 global.app = {

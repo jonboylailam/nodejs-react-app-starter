@@ -34,9 +34,10 @@
     "watchify": "^3.6.1"
   },
   "dependencies": {
-    "body-parser": "^1.14.1",
     "baobab": "^2.3.1",
     "baobab-react": "^1.0.0",
+    "body-parser": "^1.14.1",
+    "bootstrap": "^3.3.6",
     "cluster": "^0.7.7",
     "compression": "^1.6.0",
     "express": "^4.13.3",

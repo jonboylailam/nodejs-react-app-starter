@@ -25,7 +25,7 @@ var filesToWatch = [
 
 var startServer = function (options) {
   server.listen(options, function () {
-    livereload.listen({port: 35731});  // change the live reload port
+    livereload.listen({port: 35739});  // change the live reload port
   });
 
   if (options.development) {
@@ -94,7 +94,7 @@ var cssTask = function (options) {
         }));
     };
     run();
-    gulp.watch(options.src, run);
+    gulp.watch(options.watch || options.src, run);
   } else {
     gulp.src(options.src)
       .pipe(concat('main.css'))
@@ -107,6 +107,19 @@ var cssTask = function (options) {
   }
   return subject;
 };
+
+var copyFonts = function(options) {
+  var subject = new Rx.Subject();
+  var start = new Date();
+  gulp
+    .src(options.from)
+    .pipe(gulp.dest(options.to))
+    .pipe(notify(function () {
+      subject.onNext('Fonts copied in ' + (Date.now() - start) + 'ms');
+      subject.onCompleted();
+    }));
+  return subject;
+}
 
 var buildServer = function (options) {
   var subject = new Rx.Subject();
@@ -143,17 +156,23 @@ gulp.task('default', function () {
 
   var source2 = cssTask({
     development: dev,
-    src: './client/styles/*.less',
+    watch: './client/styles/**/*.less',
+    src: './client/styles/main.less',
     dest: './client/build/css'
   });
 
   var source3 = buildServer({development: dev});
 
-  Rx.Observable.combineLatest(source1, source2, source3)
+  var source4 = copyFonts({
+    from: './node_modules/bootstrap/dist/fonts/**/*',
+    to:'./client/build/fonts/'});
+
+  Rx.Observable.combineLatest(source1, source2, source3, source4)
     .subscribe(function (msg) {
       console.log(msg[0]);
       console.log(msg[1]);
       console.log(msg[2]);
+      console.log(msg[3]);
 
       startServer({
         development: true,
@@ -184,7 +203,7 @@ gulp.task('bundle', function () {
 
       gulp.src(['./package.json']).pipe(gulp.dest('./bundle'));
       gulp.src(['./client/build/img/**/*']).pipe(gulp.dest('./bundle/client/img'));
-
+      gulp.src(['./client/build/fonts/*']).pipe(gulp.dest('./bundle/client/fonts'));
     })
     .delay(3000)
     .subscribe(function () {
