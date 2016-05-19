@@ -97,6 +97,7 @@ var cssTask = function (options) {
     gulp.watch(options.watch || options.src, run);
   } else {
     gulp.src(options.src)
+      .pipe(less())
       .pipe(concat('main.css'))
       .pipe(cssmin())
       .pipe(gulp.dest(options.dest))
@@ -204,6 +205,7 @@ gulp.task('bundle', function () {
       gulp.src(['./package.json']).pipe(gulp.dest('./bundle'));
       gulp.src(['./client/build/img/**/*']).pipe(gulp.dest('./bundle/client/img'));
       gulp.src(['./client/build/fonts/*']).pipe(gulp.dest('./bundle/client/fonts'));
+      gulp.src(['./client/build/js/*.min.js']).pipe(gulp.dest('./bundle/client/js'));
     })
     .delay(3000)
     .subscribe(function () {
